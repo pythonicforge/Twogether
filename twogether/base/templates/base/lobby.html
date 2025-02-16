@@ -27,9 +27,31 @@
 
     let handleSubmit = async (e) => {
         e.preventDefault();
+        let roomName = e.target.room_name.value.toUpperCase();
 
-        window.open('/room', '_self')
+        try {
+            let response = await fetch(`/get_token?channel=${roomName}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            let data = await response.json();
 
+            let UID = data.uid;
+            let token = data.token;
+
+            console.log('UID:', UID);
+            console.log('Token:', token);
+
+            sessionStorage.setItem('UID', UID);
+            sessionStorage.setItem('room', roomName);
+            sessionStorage.setItem('token', token);
+
+            console.log(sessionStorage);
+
+            window.open('/room', '_self');
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
     }
     form.addEventListener('submit', handleSubmit);
 </script>

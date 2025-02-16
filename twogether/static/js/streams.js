@@ -1,7 +1,11 @@
 const APP_ID = "f7ea76aacf2b46c5929e705d1fa6721a"
-const CHANNEL = "main"
-const TOKEN = "007eJxTYKgqqFl06O7ZLtVPh38oOWw/s7qm3ezy8vKPknnFDSW1k+4oMKSZpyaamyUmJqcZJZmYJZtaGlmmmhuYphimJZqZGxkmzkjemN4QyMiw7/gGJkYGCATxWRhyEzPzGBgAYI4jUw=="
-let UID;
+const CHANNEL = sessionStorage.getItem("room")
+const TOKEN = sessionStorage.getItem("token")
+let UID = Number(sessionStorage.getItem("UID"))
+
+console.log('Channel:', CHANNEL);
+console.log('Token:', TOKEN);
+console.log('UID:', UID);
 
 console.log("Streams connected! yeahh")
 
@@ -76,6 +80,7 @@ let toggleMic = async (e) => {
 }
 
 let joinAndDisplayLocalStream = async () => {
+    document.getElementById("room-name").innerText = CHANNEL
     client.on("user-published", handleUserJoin)
     client.on("user-left", handleUserLeft)
 
