@@ -2,8 +2,37 @@
 {% load static %}
 
 {% block content %}
-<h3>Lobby</h3>
-<img src="{% static 'images/chat-icon.png' %}" alt="">
+<div class="min-h-screen flex items-center justify-center bg-gray-900">
+    <div class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg p-8 shadow-lg max-w-md w-full">
+        <div class="flex flex-col items-center mb-6">
+            <img src="{% static 'images/chat-icon.png' %}" alt="App Logo" class="w-16 h-16 mb-4">
+            <h1 class="text-2xl font-semibold text-white">Welcome to Twogether</h1>
+            <p class="text-sm font-normal text-white py-2">A group video calling app</p>
+        </div>
+        <form id="form">
+            <div class="mb-4">
+                <label for="room-name" class="block text-white mb-2">Room Name</label>
+                <input type="text" placeholder="Joe's Room" id="room-name" name="room_name" class="w-full px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="mb-6">
+                <label for="username" class="block text-white mb-2">Username</label>
+                <input type="text" placeholder="Joe" id="username" name="username" class="w-full px-4 py-2 rounded-lg bg-white bg-opacity-10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <input type="submit" class="w-full py-2 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500" value="Join Stream"/>
+        </form>
+    </div>
+</div>
+<script>
+    let form = document.getElementById('form');
+
+    let handleSubmit = async (e) => {
+        e.preventDefault();
+
+        window.open('/room', '_self')
+
+    }
+    form.addEventListener('submit', handleSubmit);
+</script>
 {% endblock content %}
 
 
