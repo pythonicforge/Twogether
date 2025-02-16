@@ -2,12 +2,7 @@ const APP_ID = "f7ea76aacf2b46c5929e705d1fa6721a"
 const CHANNEL = sessionStorage.getItem("room")
 const TOKEN = sessionStorage.getItem("token")
 let UID = Number(sessionStorage.getItem("UID"))
-
-console.log('Channel:', CHANNEL);
-console.log('Token:', TOKEN);
-console.log('UID:', UID);
-
-console.log("Streams connected! yeahh")
+let NAME = sessionStorage.getItem("name")
 
 const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" })
 let localTracks = []
@@ -17,6 +12,8 @@ let handleUserJoin = async (user, mediaType) => {
     remoteUsers[user.uid] = user
     await client.subscribe(user, mediaType)
 
+    let member = await getUser(user.uid)
+
     if(mediaType === "video") {
         let player = document.getElementById(`user-container-${user.uid}`)
         if(player != null){
@@ -24,13 +21,12 @@ let handleUserJoin = async (user, mediaType) => {
         }
 
         player = `<div class="video-container" id="user-container-${user.uid}">
-                <div class="username-wrapper"><span class="user-name">User-2</span></div>
+                <div class="username-wrapper"><span class="user-name">${member.name}</span></div>
                 <div class="video-player" id="user-${user.uid}"></div>
                 </div>`
         document.getElementById("video-streams").insertAdjacentHTML("beforeend", player)
 
         user.videoTrack.play(`user-${user.uid}`)
-
     }
 
     if(mediaType === "audio") {
@@ -85,11 +81,12 @@ let joinAndDisplayLocalStream = async () => {
     client.on("user-left", handleUserLeft)
 
     UID = await client.join(APP_ID, CHANNEL, TOKEN, UID)
+    let member = await createUser()
 
     localTracks = await AgoraRTC.createMicrophoneAndCameraTracks()
 
     let player = `<div class="video-container" id="user-container-${UID}">
-            <div class="username-wrapper"><span class="user-name">User-2</span></div>
+            <div class="username-wrapper"><span class="user-name">${member.name}</span></div>
             <div class="video-player" id="user-${UID}"></div>
         </div>`
 
@@ -97,6 +94,44 @@ let joinAndDisplayLocalStream = async () => {
 
     localTracks[1].play(`user-${UID}`)
     await client.publish([localTracks[0], localTracks[1]])
+}
+
+let createUser = async () => {
+    try {
+        let response = await fetch("/create_user/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "name": NAME,
+                "room_name": CHANNEL,
+                'UID': UID
+            })
+        })
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        let member = await response.json()
+        return member
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    }
+}
+
+let getUser = async (uid) => {
+    try {
+        let response = await fetch(`/get_user/?uid=${uid}&room_name=${CHANNEL}`)
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        let member = await response.json()
+        return member
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    }
 }
 
 joinAndDisplayLocalStream()
