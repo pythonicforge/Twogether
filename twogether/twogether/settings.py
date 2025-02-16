@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-=sgfl5%vd&_**=2q=&37qch0t8h)&6n#!s^4rk3qkpf_vli-_*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "0e92-2a09-bac5-3cdc-11c3-00-1c5-36.ngrok-free.app"
+]
 
 
 # Application definition
@@ -129,6 +131,7 @@ STATICFILES_DIRS = [
 
 INTERNAL_IPS = [
     "127.0.0.1",
+    "https://667a-115-244-141-202.ngrok-free.app"
 ]
 
 # Default primary key field type
